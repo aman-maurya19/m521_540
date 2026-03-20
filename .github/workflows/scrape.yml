@@ -1,6 +1,8 @@
 name: MBA Scraper
 
 on:
+  # schedule:
+  #   - cron: "0 3 * * *" # Daily 3 AM
   workflow_dispatch: {}
 
 permissions:
@@ -22,29 +24,18 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # ✅ Install Google Chrome (NO SNAP)
-      - name: Install Google Chrome
+      - name: Install Chromium
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install -y ./google-chrome-stable_current_amd64.deb
-
-      # ✅ Install ChromeDriver (matching version automatically)
-      - name: Install ChromeDriver
-        run: |
-          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1)
-          wget https://chromedriver.storage.googleapis.com/${CHROME_VERSION}.0.0/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
+          sudo apt-get install -y chromium
 
       - name: Run scraper
-        run: python allindiamedicalcollegedetails401_420.py
+        run: python allindiaengineercollegedetails1_20.py
 
       - name: Commit updated data
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add allindiamedicalcollegedetails401_420.json
+          git add allindiaengineercollegedetails1_20.json
           git commit -m "Auto update MBA data" || echo "No changes"
           git push
